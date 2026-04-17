@@ -1,0 +1,100 @@
+/* Custom styles for Malawi Service Marketplace */
+
+.hero-section {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+}
+
+.category-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.hover-shadow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.transition {
+    transition: all 0.3s ease;
+}
+
+/* Provider portfolio page */
+.portfolio-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+}
+
+.project-card {
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+    transform: scale(1.02);
+}
+
+/* Chat interface */
+.chat-message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.chat-message.sent {
+    background-color: #007bff;
+    color: white;
+    margin-left: 20%;
+}
+
+.chat-message.received {
+    background-color: #e9ecef;
+    margin-right: 20%;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 400px;
+    }
+    
+    .category-card {
+        margin-bottom: 15px;
+    }
+}
+
+/* Loading spinner */
+.loader {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notification badge */
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+}
