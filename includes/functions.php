@@ -1,10 +1,10 @@
 <?php
 //require_once __DIR__ . '/../vendor/autoload.php';
 
-/*function sendRealtimeMessage($channel, $event, $data) {
+function sendRealtimeMessage($channel, $event, $data) {
     $pusher = new Pusher\Pusher(PUSHER_APP_KEY, PUSHER_APP_SECRET, PUSHER_APP_ID, ['cluster' => PUSHER_CLUSTER]);
     $pusher->trigger($channel, $event, $data);
-}*/
+}
 
 function uploadFile($file, $subfolder = '') {
     $targetDir = UPLOAD_DIR . $subfolder;
