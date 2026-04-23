@@ -1,7 +1,7 @@
 <?php
 // PayChangu
-define('PAYCHANGU_STORE_ID', 'YOUR_STORE_ID');
-define('PAYCHANGU_STORE_KEY', 'YOUR_STORE_KEY');
+define('PAYCHANGU_STORE_ID', 'pub-test-L3S2JjdWc0nDz1wJxSXv2UlLdYrqPCT5');
+define('PAYCHANGU_STORE_KEY', 'sec-test-d0L8BN0fYzB0GsKA3dPI0uUWJb5kZ0gM');
 define('PAYCHANGU_API_URL', 'https://api.paychangu.com/v1'); // or test URL
 
 // Pusher (real-time)

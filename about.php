@@ -149,7 +149,7 @@
 <div class="bg-primary text-white py-5 text-center">
     <div class="container">
         <h3>Ready to find a trusted service provider?</h3>
-        <p class="lead mb-3">Join thousands of Malawians who use our platform every day.</p>
+        <p class="lead mb-3">Join your fellow Malawians who use our platform every day.</p>
         <a href="services.php" class="btn btn-light btn-lg">Browse Services</a>
         <?php if(!isLoggedIn()): ?>
             <a href="#" class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#registerModal">Sign Up Free</a>
@@ -164,7 +164,7 @@
             <h3>Contact Us</h3>
             <p><i class="fas fa-map-marker-alt text-danger"></i> Blantyre, Malawi</p>
             <p><i class="fas fa-phone"></i> +265 880 593 976</p>
-            <p><i class="fas fa-envelope"></i>malawiserviceshub@gmail.com</p>
+            <p><i class="fas fa-envelope"></i> malawiserviceshub@gmail.com</p>
             <div class="mt-3">
                 <a href="#" class="text-dark me-3"><i class="fab fa-facebook fa-2x"></i></a>
                 <a href="#" class="text-dark me-3"><i class="fab fa-whatsapp fa-2x"></i></a>

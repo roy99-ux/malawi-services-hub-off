@@ -192,7 +192,7 @@
 <div class="bg-primary text-white py-5">
     <div class="container text-center">
         <h3>Are you a service provider?</h3>
-        <p class="lead">Join thousands of professionals earning on our platform</p>
+        <p class="lead">Join your fellow professionals earning on our platform</p>
         <?php if(!isLoggedIn()): ?>
             <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="document.querySelector('input[value=provider]').checked=true">
                 Become a Provider
