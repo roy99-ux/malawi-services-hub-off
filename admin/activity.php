@@ -52,7 +52,7 @@ $logs = $db->query("SELECT l.*, u.name as user_name FROM activity_logs l LEFT JO
                                 <td><?= date('Y-m-d H:i:s', strtotime($log['created_at'])) ?></td>
                                 <td><?= htmlspecialchars($log['user_name'] ?? 'System') ?> (<small><?= $log['user_id'] ?? 'N/A' ?></small>)</td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($log['action']) ?></span></td>
-                                <td><?= htmlspecialchars($log['entity_type'] ?? '-') ?> (ID: <?= $log['entity_id'] ?? '-'>)</td>
+                                <td><?= htmlspecialchars($log['entity_type'] ?? '-') ?> (ID: <?= $log['entity_id'] ?? '-'?>)</td>
                                 <td><?= htmlspecialchars(substr($log['details'] ?? '', 0, 100)) ?>...</td>
                                 <td><?= htmlspecialchars($log['ip_address'] ?? '-') ?></td>
                             </tr>
