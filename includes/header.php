@@ -32,7 +32,7 @@ $unreadNotifCount = $currentUser ? getUnreadNotificationsCount($currentUser['id'
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>services.php">Find Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>services.php">Services</a></li>
                 <?php if($currentUser): ?>
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="<?= BASE_URL ?>messaging.php">

@@ -44,7 +44,7 @@ if ($categoryId) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Find Services in <?= htmlspecialchars($location ?: 'Malawi') ?></title>
+    <title>Services in <?= htmlspecialchars($location ?: 'Malawi') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -72,7 +72,7 @@ if ($categoryId) {
                         <div class="mb-3">
                             <label class="form-label">Location</label>
                             <select name="location" class="form-select">
-                                <option value="">All Locations</option>
+                                <option value="">All Cities/Districts</option>
                                 <?php
                                 $locations = ['Lilongwe','Blantyre','Mzuzu','Zomba','Balaka','Chikwawa','Chiradzulu','Chitipa','Dedza','Dowa','Karonga','Kasungu','Machinga','Mangochi','Mchinji',
                                 'Mulanje','Mwanza','Mzimba','Neno','Nkhatabay','Nkhotakota','Nsanje','Ntcheu','Ntchisi','Phalombe','Rumphi','Salima','Thyolo'];

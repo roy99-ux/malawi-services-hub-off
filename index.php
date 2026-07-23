@@ -27,7 +27,7 @@
                             <div class="col-md-5">
                                 <label class="form-label text-dark fw-bold">📍 Your Location</label>
                                 <select id="locationSelect" class="form-select form-select-lg">
-                                    <option value="">Select city/town</option>
+                                    <option value="">Select city/district</option>
                                     <option value="Lilongwe">Lilongwe</option>
                                     <option value="Blantyre">Blantyre</option>
                                     <option value="Mzuzu">Mzuzu</option>
