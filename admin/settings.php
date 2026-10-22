@@ -5,6 +5,9 @@ $db = getDb();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($_POST['settings'] as $key => $value) {
+        if ($key === 'smtp_pass' && $value === '') {
+            continue;
+        }
         $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
         $stmt->execute([$key, $value, $value]);
     }
@@ -15,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $settings = [];
 $stmt = $db->query("SELECT * FROM settings");
 while($row = $stmt->fetch()) { $settings[$row['setting_key']] = $row['setting_value']; }
+$escape = static fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,10 +56,22 @@ while($row = $stmt->fetch()) { $settings[$row['setting_key']] = $row['setting_va
                 
                 <div class="card shadow mb-4"><div class="card-header bg-info text-white">Email Configuration</div>
                 <div class="card-body">
-                    <div class="mb-3"><label>SMTP Host</label><input type="text" name="settings[smtp_host]" class="form-control" value="<?= $settings['smtp_host'] ?? '' ?>"></div>
-                    <div class="mb-3"><label>SMTP Port</label><input type="text" name="settings[smtp_port]" class="form-control" value="<?= $settings['smtp_port'] ?? '587' ?>"></div>
-                    <div class="mb-3"><label>SMTP User</label><input type="text" name="settings[smtp_user]" class="form-control" value="<?= $settings['smtp_user'] ?? '' ?>"></div>
-                    <div class="mb-3"><label>SMTP Password</label><input type="password" name="settings[smtp_pass]" class="form-control" value="<?= $settings['smtp_pass'] ?? '' ?>"></div>
+                    <div class="mb-3"><label>SMTP Host</label><input type="text" name="settings[smtp_host]" class="form-control" value="<?= $escape($settings['smtp_host'] ?? '') ?>" required></div>
+                    <div class="mb-3"><label>SMTP Port</label><input type="number" name="settings[smtp_port]" class="form-control" value="<?= $escape($settings['smtp_port'] ?? '587') ?>" min="1" max="65535" required></div>
+                    <div class="mb-3">
+                        <label for="smtp-encryption">SMTP Encryption</label>
+                        <select id="smtp-encryption" name="settings[smtp_encryption]" class="form-select">
+                            <?php foreach (['tls' => 'TLS (recommended, port 587)', 'ssl' => 'SSL (port 465)', 'none' => 'None'] as $value => $label): ?>
+                                <option value="<?= $value ?>" <?= ($settings['smtp_encryption'] ?? 'tls') === $value ? 'selected' : '' ?>><?= $label ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label>SMTP User</label><input type="email" name="settings[smtp_user]" class="form-control" value="<?= $escape($settings['smtp_user'] ?? '') ?>" required></div>
+                    <div class="mb-3">
+                        <label>SMTP Password</label>
+                        <input type="password" name="settings[smtp_pass]" class="form-control" value="" placeholder="<?= !empty($settings['smtp_pass']) ? 'Saved (leave blank to keep current)' : 'Enter SMTP password' ?>" autocomplete="new-password">
+                    </div>
+                    <p class="form-text">For Gmail, use an App Password. Saving a blank password keeps the current one.</p>
                 </div></div>
                 
                 <div class="card shadow mb-4"><div class="card-header bg-warning">Payment Configuration (PayChangu)</div>

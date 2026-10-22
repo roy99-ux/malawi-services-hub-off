@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
+require_once '../includes/mailer.php';
 header('Content-Type: application/json');
 
 $respond = static function (int $status, bool $success, string $message): void {
@@ -33,33 +34,17 @@ $stmt = $db->prepare("UPDATE users SET reset_password_token = ?, reset_password_
 $stmt->execute([$token, $expires, $user['id']]);
 
 $resetLink = BASE_URL . 'reset_password.php?token=' . rawurlencode($token);
-$mailWarning = null;
-set_error_handler(static function (int $severity, string $message) use (&$mailWarning): bool {
-    if ($severity === E_WARNING) {
-        $mailWarning = $message;
-        return true;
-    }
-    return false;
-});
-
 try {
-    $sent = mail(
+    sendConfiguredEmail(
         $email,
         'Password Reset - Malawi Service Hub',
-        "Click this link to reset your password: $resetLink",
-        'From: malawiserviceshub@gmail.com'
+        "Click this link to reset your password: $resetLink"
     );
-} finally {
-    restore_error_handler();
-}
-
-if (!$sent) {
-    if ($mailWarning !== null) {
-        error_log('Password reset email could not be sent: ' . $mailWarning);
-    }
+} catch (\PHPMailer\PHPMailer\Exception | RuntimeException $exception) {
+    error_log('Password reset email could not be sent: ' . $exception->getMessage());
     $stmt = $db->prepare('UPDATE users SET reset_password_token = NULL, reset_password_expire = NULL WHERE id = ? AND reset_password_token = ?');
     $stmt->execute([$user['id'], $token]);
-    $respond(503, false, 'Unable to send the reset email. Please check the server email settings and try again.');
+    $respond(503, false, 'Unable to send the reset email. Please check the SMTP settings and try again.');
 }
 
 $respond(200, true, 'Password reset link sent to your email.');
