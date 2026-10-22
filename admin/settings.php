@@ -56,8 +56,8 @@ $escape = static fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UT
                 
                 <div class="card shadow mb-4"><div class="card-header bg-info text-white">Email Configuration</div>
                 <div class="card-body">
-                    <div class="mb-3"><label>SMTP Host</label><input type="text" name="settings[smtp_host]" class="form-control" value="<?= $escape($settings['smtp_host'] ?? '') ?>" required></div>
-                    <div class="mb-3"><label>SMTP Port</label><input type="number" name="settings[smtp_port]" class="form-control" value="<?= $escape($settings['smtp_port'] ?? '587') ?>" min="1" max="65535" required></div>
+                    <div class="mb-3"><label>SMTP Host</label><input type="text" name="settings[smtp_host]" class="form-control" value="<?= $escape($settings['smtp_host'] ?? '') ?>"></div>
+                    <div class="mb-3"><label>SMTP Port</label><input type="number" name="settings[smtp_port]" class="form-control" value="<?= $escape($settings['smtp_port'] ?? '587') ?>" min="1" max="65535"></div>
                     <div class="mb-3">
                         <label for="smtp-encryption">SMTP Encryption</label>
                         <select id="smtp-encryption" name="settings[smtp_encryption]" class="form-select">
@@ -66,7 +66,7 @@ $escape = static fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UT
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="mb-3"><label>SMTP User</label><input type="email" name="settings[smtp_user]" class="form-control" value="<?= $escape($settings['smtp_user'] ?? '') ?>" required></div>
+                    <div class="mb-3"><label>SMTP User</label><input type="email" name="settings[smtp_user]" class="form-control" value="<?= $escape($settings['smtp_user'] ?? '') ?>"></div>
                     <div class="mb-3">
                         <label>SMTP Password</label>
                         <input type="password" name="settings[smtp_pass]" class="form-control" value="" placeholder="<?= !empty($settings['smtp_pass']) ? 'Saved (leave blank to keep current)' : 'Enter SMTP password' ?>" autocomplete="new-password">

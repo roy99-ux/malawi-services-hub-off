@@ -16,7 +16,7 @@ function sendConfiguredEmail(string $recipient, string $subject, string $body): 
     $password = $settings['smtp_pass'] ?? '';
     $encryption = strtolower(trim($settings['smtp_encryption'] ?? 'tls'));
 
-    if ($host === '' || !$port || $username === '' || $password === '') {
+    if ($host === '' || !$port || $port > 65535 || $username === '' || $password === '') {
         throw new RuntimeException('SMTP settings are incomplete.');
     }
     if (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
