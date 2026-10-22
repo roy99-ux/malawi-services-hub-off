@@ -2,67 +2,38 @@
 require_once '../includes/db.php';
 require_once '../includes/auth.php';
 requireLogin();
-
 header('Content-Type: application/json');
 
 $user = getCurrentUser();
 if ($user['role'] !== 'customer') {
-    http_response_code(403);
-    echo json_encode(['error' => 'Only customers can initiate payments.']);
-    exit;
+    die(json_encode(['error' => 'Only customers can initiate payments.']));
 }
 
 $bookingId = $_POST['booking_id'] ?? 0;
 if (!$bookingId) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Booking ID required.']);
-    exit;
+    die(json_encode(['error' => 'Booking ID required.']));
 }
 
 $db = getDb();
-
-// Fetch booking
-$stmt = $db->prepare("SELECT b.*, u.name as provider_name, u.phone as provider_phone 
-                       FROM bookings b 
-                       JOIN users u ON b.provider_id = u.id 
-                       WHERE b.id = ? AND b.customer_id = ? AND b.status = 'confirmed'");
-if (!$stmt) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database prepare failed.']);
-    exit;
-}
+$stmt = $db->prepare("SELECT b.*, u.name as provider_name FROM bookings b JOIN users u ON b.provider_id = u.id WHERE b.id = ? AND b.customer_id = ? AND b.status = 'confirmed'");
 $stmt->execute([$bookingId, $user['id']]);
 $booking = $stmt->fetch(PDO::FETCH_ASSOC);
-
 if (!$booking) {
-    http_response_code(404);
-    echo json_encode(['error' => 'Booking not found or not confirmed.']);
-    exit;
+    die(json_encode(['error' => 'Booking not found or not confirmed.']));
 }
 
 $amount = $booking['negotiated_amount'] ?? $booking['quote_amount'];
 if (!$amount || $amount <= 0) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Invalid amount.']);
-    exit;
+    die(json_encode(['error' => 'Invalid amount.']));
 }
-
-// Check for existing payment
 if ($booking['payment_status'] === 'paid') {
-    http_response_code(400);
-    echo json_encode(['error' => 'This booking has already been paid.']);
-    exit;
+    die(json_encode(['error' => 'Already paid.']));
 }
-
-// PayChangu credentials
-define('PAYCHANGU_STORE_ID', 'your_store_id_here');
-define('PAYCHANGU_STORE_KEY', 'your_store_key_here');
-define('PAYCHANGU_API_URL', 'https://api.paychangu.com/v1'); // use sandbox if testing
 
 $payload = [
     'store_id' => PAYCHANGU_STORE_ID,
     'store_key' => PAYCHANGU_STORE_KEY,
-    'amount' => (float) $amount,
+    'amount' => (float)$amount,
     'currency' => 'MWK',
     'reference' => 'BOOK-' . $bookingId . '-' . time(),
     'customer_name' => $user['name'],
@@ -73,51 +44,43 @@ $payload = [
     'description' => "Payment for booking #{$bookingId} - " . $booking['provider_name']
 ];
 
-// Log payload for debugging
-error_log("PayChangu payload: " . json_encode($payload));
-
-$ch = curl_init(PAYCHANGU_API_URL . "/payment/initiate");
+$url = PAYCHANGU_API_URL . "/payment/initiate";
+$ch = curl_init($url);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // disable if localhost/self-signed
-
+curl_setopt($ch, CURLOPT_VERBOSE, true);
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
 
 if ($curlError) {
-    error_log("CURL Error: " . $curlError);
-    http_response_code(500);
-    echo json_encode(['error' => 'CURL error: ' . $curlError]);
-    exit;
+    die(json_encode(['error' => 'CURL error: ' . $curlError]));
 }
 
-if (!$response) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Payment gateway did not respond.']);
-    exit;
+// Log the full response for debugging
+error_log("PayChangu response (HTTP $httpCode): " . $response);
+
+if ($httpCode !== 200) {
+    // Try to parse error message from response
+    $decoded = json_decode($response, true);
+    $msg = $decoded['message'] ?? $decoded['error'] ?? $response;
+    die(json_encode(['error' => "HTTP $httpCode: $msg"]));
 }
 
-error_log("PayChangu response: " . $response);
 $result = json_decode($response, true);
+if (!$result) {
+    die(json_encode(['error' => 'Invalid JSON: ' . $response]));
+}
 
 if (!isset($result['status']) || $result['status'] !== 'success') {
-    $message = $result['message'] ?? 'Unknown error';
-    $fullMessage = "Payment initiation failed: " . $message;
-    // If there's a data field with more details, show it
-    if (isset($result['data']) && is_array($result['data'])) {
-        $fullMessage .= " - " . json_encode($result['data']);
-    }
-    http_response_code(400);
-    echo json_encode(['error' => $fullMessage]);
-    exit;
+    $msg = $result['message'] ?? $result['error'] ?? 'Unknown error';
+    die(json_encode(['error' => "Payment failed: $msg"]));
 }
 
-// Save reference
 $stmt = $db->prepare("UPDATE bookings SET transaction_id = ? WHERE id = ?");
 $stmt->execute([$result['data']['reference'], $bookingId]);
 

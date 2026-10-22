@@ -2,7 +2,7 @@
 require_once 'config.php';
 
 $host = 'localhost';
-$dbname = 'malawi_marketplace';
+$dbname = 'malawi_services_hub';
 $username = 'root';
 $password = '';
 

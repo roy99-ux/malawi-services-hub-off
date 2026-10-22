@@ -24,6 +24,6 @@ $stmt->execute([$token, $expires, $user['id']]);
 
 $resetLink = BASE_URL . "reset_password.php?token=$token";
 // Send email (simplified - use PHPMailer in production)
-mail($email, "Password Reset - Malawi Service Hub", "Click this link to reset your password: $resetLink", "From: no-reply@malawiservicehub.mw");
+mail($email, "Password Reset - Malawi Service Hub", "Click this link to reset your password: $resetLink", "From: malawiserviceshub@gmail.com");
 
 echo json_encode(['success' => true, 'message' => 'Password reset link sent to your email.']);
