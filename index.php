@@ -431,13 +431,23 @@ $('#forgotForm').on('submit', function(e) {
         data: $(this).serialize(),
         dataType: 'json',
         success: function(response) {
-            $('#forgotAlert').html('<div class="alert alert-success">' + response.message + '</div>');
-            setTimeout(function() {
-                $('#forgotPasswordModal').modal('hide');
-            }, 3000);
+            const alert = $('<div>')
+                .addClass('alert ' + (response.success ? 'alert-success' : 'alert-danger'))
+                .text(response.message);
+            $('#forgotAlert').empty().append(alert);
+            if (response.success) {
+                setTimeout(function() {
+                    $('#forgotPasswordModal').modal('hide');
+                }, 3000);
+            }
         },
-        error: function() {
-            $('#forgotAlert').html('<div class="alert alert-danger">Error processing request.</div>');
+        error: function(xhr) {
+            const message = xhr.responseJSON && xhr.responseJSON.message
+                ? xhr.responseJSON.message
+                : 'Unable to process the request. Please try again.';
+            $('#forgotAlert').empty().append(
+                $('<div>').addClass('alert alert-danger').text(message)
+            );
         }
     });
 });
